@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Sampled from the reference screenshots — change here to retune the whole site. */
+    --canvas: #f5f2ef;
+    --bone: #faf8f5;
+    --ink: #1a1a1a;
+    --muted: #6e6b67;
+    --line: #e4e0db;
+    --accent: #b39a6d;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-canvas font-body text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-ink text-bone;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ink ring-offset-2 ring-offset-canvas;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Wide-tracked uppercase micro-label used for nav, eyebrows and buttons. */
+  .label-caps {
+    @apply font-body text-[11px] font-medium uppercase tracking-widest;
+  }
+
+  /*
+   * Correction #2 from the review PDF: "Add white gradient to background
+   * below of text layer of all images". Applied to every photographic
+   * banner so overlaid copy keeps its contrast.
+   */
+  .scrim-light {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.72) 34%,
+      rgba(255, 255, 255, 0.22) 62%,
+      rgba(255, 255, 255, 0) 88%
+    );
+  }
+
+  .scrim-center {
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.46) 0%,
+        rgba(0, 0, 0, 0.28) 55%,
+        rgba(0, 0, 0, 0.16) 100%
+      ),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.12) 100%);
+  }
+
+  /*
+    For banners whose photograph already contains lettering — a signage wall,
+    a logo, an engraved wordmark. Flatter and heavier than .scrim-center so the
+    lettering behind sinks back evenly instead of staying bright at the edges.
+    No blur — the photograph keeps its detail.
+  */
+  .scrim-center-strong {
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.66) 55%,
+        rgba(0, 0, 0, 0.58) 100%
+      ),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.34) 100%);
+  }
+}
