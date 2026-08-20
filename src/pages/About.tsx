@@ -180,12 +180,19 @@ function StackedHeading({ lines }: { lines: string[] }) {
   );
 }
 
-/** Bulleted narrative column, divided from the heading by a hairline rule. */
+/**
+ * Narrative column, divided from the heading by a hairline rule.
+ *
+ * Set as running prose rather than a bulleted list — these are continuous
+ * arguments, not parallel items, and bullets were chopping them into fragments
+ * that read as notes. The opening paragraph is set a touch larger to act as a
+ * lead-in, and the left indent that the bullets needed is gone.
+ */
 function NarrativeList({ children }: { children: ReactNode }) {
   return (
-    <ul className="list-disc space-y-5 border-ink/70 pl-5 font-body text-[0.95rem] leading-relaxed text-ink md:border-l md:pl-12">
+    <div className="space-y-6 border-ink/70 font-body text-[0.95rem] leading-[1.85] text-ink [&>p:first-child]:text-[1.03rem] [&>p:first-child]:leading-[1.75] md:border-l md:pl-12">
       {children}
-    </ul>
+    </div>
   );
 }
 
@@ -201,7 +208,7 @@ export default function About() {
     <>
       <PageHero
         title="About Us"
-        subtitle="Designing Spaces With Clarity and Character"
+        subtitle="Resolving Design Dilemmas With Proven Excellence"
         image="/assets/images/hero/about-hero.jpg"
         imageAlt="The Design Atelier reception with the illuminated logo wall"
         scrim="strong"
@@ -222,31 +229,31 @@ export default function About() {
 
           <Reveal delay={120}>
             <NarrativeList>
-              <li>
+              <p>
                 Decades ago, on a factory floor in Amalner, Maharashtra, my grandfather{' '}
                 <strong className="font-medium">Bhaskar Savlaram Mulay</strong> erected the first
                 boiler for Dalda — the vegetable oil enterprise that would, under Azim Premji, grow
                 into what the world today knows as Wipro.
-              </li>
-              <li>
+              </p>
+              <p>
                 He was not an architect. He was a builder of the practical infrastructure that made
                 industry possible in a young republic — a man measured by whether the thing he built
                 worked, held, and lasted.
-              </li>
-              <li>
+              </p>
+              <p>
                 In the years that followed, the opportunities that come to a man with proven hands
                 came to him too. He chose his work with care. Growth for its own sake held no
                 particular appeal; the work itself did.
-              </li>
-              <li>
+              </p>
+              <p>
                 His career does not survive as a monument. It survives as a habit — the discipline
                 of building things that hold up under load, on time, without shortcuts, and the
                 quieter discipline of choosing which things are worth building at all.
-              </li>
-              <li>
+              </p>
+              <p>
                 That habit is the inheritance{' '}
                 <strong className="font-medium">The Design Atelier</strong> is built on.
-              </li>
+              </p>
             </NarrativeList>
           </Reveal>
         </div>
@@ -306,25 +313,25 @@ export default function About() {
 
           <Reveal delay={120}>
             <NarrativeList>
-              <li>
+              <p>
                 We are a small studio by choice. It means the architect who takes your first meeting
                 is the architect on your final site visit. It means every drawing set has been read,
                 not just signed. Design, for us, begins with the problem, not the picture — every
                 brief carries dilemmas of programme, budget, site, and stakeholder, and our job is
                 to resolve them.
-              </li>
-              <li>
+              </p>
+              <p>
                 Where AI helps us work faster or think wider, we adopt it deliberately; where
                 judgement matters, that stays human. Nothing leaves the studio that we would not
                 stand behind ourselves.
-              </li>
-              <li>
+              </p>
+              <p>
                 That is the meaning of our line: Resolving Design Dilemmas With Proven Excellence.
-              </li>
-              <li>
+              </p>
+              <p>
                 Generations after a boiler was fired in Amalner, we are still in the business of
                 building things that hold.
-              </li>
+              </p>
             </NarrativeList>
           </Reveal>
         </div>
@@ -341,8 +348,8 @@ export default function About() {
         <Reveal className="relative">
           <SectionHeading
             title="Our Philosophy"
-            subtitle="Design Thinking That Feels Right"
-            intro="Every project is different. Our thinking remains the same: clarity, long-term value, and human-centered design guide every decision."
+            subtitle="Four disciplines the practice does not compromise on."
+            intro="We are a small studio by choice. It means the architect who takes your first meeting is the architect on your final site visit — and it means everything that follows can be held to a single standard."
           />
         </Reveal>
 
@@ -350,9 +357,16 @@ export default function About() {
         <div className="relative mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {PHILOSOPHY.map((pillar, i) => (
             <Reveal key={pillar.label} delay={i * 90}>
-              <div className="border-t border-line pt-6">
-                <h3 className="label-caps text-subtle">{pillar.label}</h3>
-                <p className="mt-5 font-body text-[0.95rem] leading-relaxed text-muted">
+              <div className="h-full border-t border-line pt-6">
+                {/*
+                  The labels are two or three words now, so some wrap to a
+                  second line. min-h reserves both lines in every card, which
+                  keeps the four body paragraphs starting on the same baseline.
+                */}
+                <h3 className="label-caps min-h-[2.4em] leading-[1.2em] text-subtle">
+                  {pillar.label}
+                </h3>
+                <p className="mt-4 font-body text-[0.95rem] leading-relaxed text-muted">
                   {pillar.body}
                 </p>
               </div>
@@ -403,7 +417,7 @@ export default function About() {
           section order stays faithful; the list needs to be supplied.
         */}
         <Reveal className="relative mt-16">
-          <h3 className="font-heading text-[1.7rem] text-ink md:text-[2rem]">We Work In</h3>
+          <h3 className="font-heading text-[1.7rem] text-ink md:text-[2rem]"></h3>
         </Reveal>
       </Section>
 

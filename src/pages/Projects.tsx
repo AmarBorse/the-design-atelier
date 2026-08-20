@@ -31,7 +31,7 @@ const TAB_LABELS: Record<string, string> = {
 /** Stand-in tile shown until a panel has a real photograph. */
 function PanelPlaceholder() {
   return (
-    <div className="flex aspect-[4/3] w-full items-center justify-center border border-dashed border-line bg-canvas">
+    <div className="flex aspect-[4/3] w-full items-center justify-center bg-canvas">
       <svg
         aria-hidden="true"
         viewBox="0 0 48 48"
@@ -60,26 +60,46 @@ function ProjectEntryBlock({ entry, index }: { entry: ProjectEntry; index: numbe
         {entry.location && <span className="text-muted">— {entry.location}</span>}
       </h4>
 
-      <div className="mt-6 grid gap-8 md:grid-cols-3 md:gap-6">
+      <div className="mt-6 grid gap-6 md:grid-cols-3">
         {entry.panels.map((panel, p) => (
-          <div key={p}>
-            {panel.image ? (
-              <img
-                src={panel.image}
-                alt={panel.alt ?? ''}
-                loading="lazy"
-                decoding="async"
-                className="aspect-[4/3] w-full object-cover"
-              />
-            ) : (
-              <PanelPlaceholder />
-            )}
-            <ul className="mt-4 list-disc space-y-2 pl-4 font-body text-[0.82rem] leading-relaxed text-muted">
-              {panel.points.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-          </div>
+          <article
+            key={p}
+            className="group flex h-full flex-col overflow-hidden border border-line bg-surface transition-all duration-500 ease-atelier hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(26,26,26,0.10)]"
+          >
+            {/* The photo sits behind its own overflow clip so the zoom on
+                hover never escapes the card edge. */}
+            <div className="overflow-hidden">
+              {panel.image ? (
+                <img
+                  src={panel.image}
+                  alt={panel.alt ?? ''}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-atelier group-hover:scale-[1.05]"
+                />
+              ) : (
+                <PanelPlaceholder />
+              )}
+            </div>
+
+            <div className="flex flex-1 flex-col gap-3 p-5">
+              {/*
+                "Plate" is the term architects use for a numbered drawing or
+                photograph in a presentation set — the panels genuinely are
+                that sequence, so the label carries real information rather
+                than decorating the card.
+              */}
+              <div className="flex items-center gap-3">
+                <span className="label-caps shrink-0 text-accent">
+                  Plate {String(p + 1).padStart(2, '0')}
+                </span>
+                <span aria-hidden="true" className="h-px flex-1 bg-line" />
+              </div>
+              <p className="font-body text-[0.82rem] leading-relaxed text-muted">
+                {panel.points.join(' ')}
+              </p>
+            </div>
+          </article>
         ))}
       </div>
     </article>

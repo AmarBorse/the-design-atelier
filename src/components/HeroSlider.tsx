@@ -158,20 +158,36 @@ export default function HeroSlider() {
 
       <Container className="relative flex h-full flex-col justify-center">
         <div className="max-w-2xl">
-          <h1 className="animate-fadeUp font-display text-[1.8rem] font-normal uppercase leading-[1.14] tracking-[0.015em] text-ink sm:text-[2.5rem] lg:text-[3.05rem]">
-            Designing Timeless Spaces With Purpose &amp; Precision
+          {/*
+            Review §5.1, Option B. The eyebrow carries the practice tagline —
+            the same line Option A used as its heading — so both survive: the
+            positioning statement reads first, the display line beneath it.
+            §4 makes this the one primary tagline across the site.
+
+            Colour note: brand gold (#FCB61D) fails contrast on the pale scrim,
+            so the eyebrow uses `accent` (#B39A6D), which reads amber and holds
+            up against the lighter areas of every slide.
+          */}
+          <p className="label-caps animate-fadeUp text-accent">
+            Resolving Design Dilemmas With Proven Excellence
+          </p>
+          <h1
+            style={{ animationDelay: '120ms' }}
+            className="mt-5 animate-fadeUp font-display text-[1.8rem] font-normal uppercase leading-[1.14] tracking-[0.015em] text-ink sm:text-[2.5rem] lg:text-[3.05rem]"
+          >
+            Architecture That Holds Up on Paper, on Site, and Over Time
           </h1>
           <p
-            style={{ animationDelay: '180ms' }}
+            style={{ animationDelay: '260ms' }}
             className="mt-6 max-w-lg animate-fadeUp font-body text-[0.8rem] leading-relaxed text-ink/75 md:text-[0.875rem]"
           >
-            At The Design Atelier, we believe every space should feel effortless, timeless, and
-            deeply connected to the people who experience it. Our work combines thoughtful
-            planning, refined aesthetics, and practical functionality to create environments that
-            age beautifully over time.
+            An independent architecture and interior practice based in Nashik, with 19+ years of
+            experience across India and the GCC. We work in two disciplines — government and
+            institutional healthcare architecture, and premium turnkey interior design — for
+            clients whose projects cannot afford to go wrong. Empanelled with NHM, RBI, and PWD.
           </p>
           <div
-            style={{ animationDelay: '320ms' }}
+            style={{ animationDelay: '400ms' }}
             className="mt-10 flex animate-fadeUp flex-col gap-4 sm:flex-row"
           >
             <Button to="/projects" variant="outline">

@@ -93,7 +93,7 @@ function DocumentMark() {
 
 export default function Journals() {
   usePageMeta({
-    title: 'Journals — The Design Atelier',
+    title: 'Reading Room — The Design Atelier',
     description:
       'Notes, reflections, and project thinking from the studio at The Design Atelier.',
     path: '/journals',
@@ -102,7 +102,7 @@ export default function Journals() {
   return (
     <>
       <PageHero
-        title="Journals"
+        title="Reading Room"
         subtitle="Notes and Reflections from the Studio"
         image="/assets/images/hero/services-hero.jpg"
         imageAlt="Neutral living room with a linen sofa, pampas grass and a lounge chair"
