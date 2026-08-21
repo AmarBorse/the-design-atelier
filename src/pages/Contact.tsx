@@ -34,7 +34,7 @@ import { usePageMeta } from '../lib/seo';
  * inbox, so replies land in the same thread as the inquiry.
  */
 const EMAILJS_SERVICE_ID = 'service_48ibpup';
-const EMAILJS_TEMPLATE_ID = 'template_du78htk';
+const EMAILJS_TEMPLATE_ID = 'template_8ia12pk';
 const EMAILJS_PUBLIC_KEY = 'a0tz37CA99IlAPpbc';
 
 type SubmitState = 'idle' | 'sending' | 'sent' | 'error';
