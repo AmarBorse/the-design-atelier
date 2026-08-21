@@ -10,6 +10,8 @@ type Props = {
   variant?: Variant;
   type?: 'button' | 'submit';
   className?: string;
+  /** Only meaningful on the plain <button> form (no `to`/`href`). */
+  disabled?: boolean;
 };
 
 const BASE =
@@ -30,11 +32,16 @@ export default function Button({
   variant = 'solid',
   type = 'button',
   className = '',
+  disabled = false,
 }: Props) {
   const cls = `${BASE} ${VARIANTS[variant]} ${className}`;
   if (to) return <Link to={to} className={cls}>{children}</Link>;
   if (href) return <a href={href} className={cls}>{children}</a>;
-  return <button type={type} className={cls}>{children}</button>;
+  return (
+    <button type={type} className={cls} disabled={disabled}>
+      {children}
+    </button>
+  );
 }
 
 /** The "ALL PROJECTS →" / "LEARN MORE →" text link with a sliding arrow. */

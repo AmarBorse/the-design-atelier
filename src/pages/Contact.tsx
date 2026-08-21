@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import emailjs from '@emailjs/browser';
 import Section from '../components/Section';
 import SectionHeading from '../components/SectionHeading';
 import PageHero from '../components/PageHero';
@@ -9,6 +10,35 @@ import Button from '../components/Button';
 import { OFFICES, STUDIO } from '../data/site';
 import { usePageMeta } from '../lib/seo';
 
+/**
+ * EmailJS configuration for the inquiry form.
+ *
+ * ACTIVATING THIS FORM — one-time dashboard setup, no further code changes:
+ *   1. Create a free account at https://www.emailjs.com
+ *   2. Add an Email Service (connect the Gmail/Outlook inbox that should
+ *      receive inquiries) → copy its Service ID
+ *   3. Create an Email Template with {{name}}, {{email}}, {{message}}
+ *      placeholders → copy its Template ID
+ *   4. Account → General → copy the Public Key
+ *   5. Paste all three below in place of the REPLACE_WITH_… placeholders
+ *
+ * Full walkthrough with screenshots: see the chat message this shipped
+ * with, or https://www.emailjs.com/docs/tutorial/creating-email-template/
+ *
+ * Until all three are filled in, submissions fail gracefully — the person
+ * sees the error state below and the "email us directly" link, never a
+ * silent failure or a broken redirect.
+ *
+ * Free tier is 200 emails/month, no card required. Unlike a relay service
+ * (Formspree, Web3Forms), EmailJS sends from the studio's own connected
+ * inbox, so replies land in the same thread as the inquiry.
+ */
+const EMAILJS_SERVICE_ID = 'service_hune65v';
+const EMAILJS_TEMPLATE_ID = 'template_8ia12pk';
+const EMAILJS_PUBLIC_KEY = 'a0tz37CA99IlAPpbc';
+
+type SubmitState = 'idle' | 'sending' | 'sent' | 'error';
+
 export default function Contact() {
   usePageMeta({
     title: 'Contact — The Design Atelier',
@@ -17,22 +47,42 @@ export default function Contact() {
     path: '/contact',
   });
 
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<SubmitState>('idle');
 
-  /**
-   * No backend exists in this handover, so the form composes a mail draft to
-   * the studio address. Swap this handler for a POST to your form endpoint
-   * (Formspree, Resend, a serverless route) when one is available.
-   */
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = String(data.get('name') ?? '');
-    const email = String(data.get('email') ?? '');
-    const message = String(data.get('message') ?? '');
-    const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
-    window.location.href = `mailto:${STUDIO.email}?subject=Project inquiry from ${name}&body=${body}`;
-    setSent(true);
+    const form = event.currentTarget;
+
+    // Bots fill every field, including the one real visitors never see.
+    // Drop the submission without sending — no error, no email, and the
+    // person sees the normal success state so a bot gets no signal that
+    // it was caught.
+    if (new FormData(form).get('website')) {
+      setStatus('sent');
+      form.reset();
+      return;
+    }
+
+    setStatus('sending');
+
+    try {
+      const result = await emailjs.sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        form,
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
+
+      if (result.status === 200) {
+        setStatus('sent');
+        form.reset();
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      // Network failure, or the EmailJS IDs above still hold placeholders.
+      setStatus('error');
+    }
   }
 
   return (
@@ -42,7 +92,7 @@ export default function Contact() {
         subtitle="Let’s Talk About Your Next Architecture or Interior Project"
         intro="Reach out to discuss a new home, workplace, hospitality venue, or renovation. We help create spaces that feel thoughtful, elegant, and easy to live in."
         image="/assets/images/hero/contact-hero.jpg"
-        imageAlt="Warmly lit studio interior"
+        imageAlt="Wooden blocks with phone, envelope, @, and mobile icons, with a hand holding a phone in the background"
       />
 
       <Section tone="bone">
@@ -57,6 +107,21 @@ export default function Contact() {
         <div className="mt-16 grid gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <form onSubmit={handleSubmit}>
+              {/*
+                Honeypot: a field real visitors never see or fill. EmailJS
+                has no built-in spam field like Formspree's `_gotcha`, so this
+                is checked manually in handleSubmit — if it arrives non-empty,
+                the submission is silently dropped rather than emailed.
+              */}
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
+
               <div className="flex flex-col gap-10">
                 <div>
                   <label htmlFor="name" className="label-caps text-subtle">
@@ -100,12 +165,30 @@ export default function Contact() {
                 </div>
               </div>
 
-              <Button type="submit" variant="outline" className="mt-10">
-                Send Inquiry
+              <Button
+                type="submit"
+                variant="outline"
+                className="mt-10 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={status === 'sending'}
+              >
+                {status === 'sending' ? 'Sending…' : 'Send Inquiry'}
               </Button>
 
               <p aria-live="polite" className="mt-4 font-body text-sm text-muted">
-                {sent ? 'Opening your email client…' : ''}
+                {status === 'sent' &&
+                  "Thank you — your inquiry has been sent. We'll be in touch shortly."}
+                {status === 'error' && (
+                  <>
+                    Something went wrong sending that. Please try again, or email us directly at{' '}
+                    <a
+                      href={`mailto:${STUDIO.email}`}
+                      className="text-ink underline underline-offset-2 hover:text-accent"
+                    >
+                      {STUDIO.email}
+                    </a>
+                    .
+                  </>
+                )}
               </p>
             </form>
           </Reveal>
