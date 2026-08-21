@@ -29,7 +29,7 @@ export default function MobileMenu({ open, onClose }: Props) {
       ref={panelRef}
       tabIndex={-1}
       aria-hidden={!open}
-      className={`fixed inset-0 z-40 bg-bone transition-[opacity,visibility] duration-500 ease-atelier md:hidden ${
+      className={`fixed inset-0 z-[60] bg-bone transition-[opacity,visibility] duration-500 ease-atelier md:hidden ${
         open ? 'visible opacity-100' : 'invisible opacity-0'
       }`}
     >
