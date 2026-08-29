@@ -7,6 +7,7 @@ import About from './pages/About';
 import Projects from './pages/Projects';
 import Journals from './pages/Journals';
 import Contact from './pages/Contact';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -23,6 +24,8 @@ export default function App() {
           {/* Old URL kept alive so existing links and bookmarks do not 404. */}
           <Route path="/services" element={<Navigate to="/journals" replace />} />
           <Route path="/contact" element={<Contact />} />
+          {/* Not in NAV — content editor, reachable only by direct URL + Supabase login. */}
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Section from '../components/Section';
 import SectionHeading from '../components/SectionHeading';
 import PageHero from '../components/PageHero';
 import CtaBanner from '../components/CtaBanner';
 import Reveal from '../components/Reveal';
-import { PROJECTS, PROJECT_INDEX } from '../data/projects';
-import type { ProjectEntry } from '../data/projects';
+import { PROJECTS } from '../data/projects';
+import { subscribeProjects } from '../lib/content';
+import type { ProjectDoc } from '../lib/content';
 import { usePageMeta } from '../lib/seo';
 
 /**
@@ -51,7 +52,7 @@ function PanelPlaceholder() {
 }
 
 /** One numbered project: its name, then its panels of image + notes. */
-function ProjectEntryBlock({ entry, index }: { entry: ProjectEntry; index: number }) {
+function ProjectEntryBlock({ entry, index }: { entry: ProjectDoc; index: number }) {
   return (
     <article className={index > 0 ? 'border-t border-line pt-10' : ''}>
       <h4 className="flex flex-wrap items-baseline gap-x-3 font-body text-sm font-medium uppercase tracking-[0.08em] text-ink">
@@ -117,11 +118,31 @@ export default function Projects() {
   /** Slug of the category tab currently showing in the project index. */
   const [activeSlug, setActiveSlug] = useState<string>(PROJECTS[0].slug);
 
-  const activeEntries = useMemo(
-    () => PROJECT_INDEX[activeSlug] ?? [],
-    [activeSlug]
-  );
+  // Project entries are kept live by a Supabase subscription — any edit
+  // made in /admin (from any device) appears here within moments, no
+  // rebuild or redeploy involved. Categories themselves are still the
+  // fixed eight from data/projects.ts for now.
+  const [allProjects, setAllProjects] = useState<ProjectDoc[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = subscribeProjects((docs) => {
+      setAllProjects(docs);
+      setLoaded(true);
+    });
+    return unsubscribe;
+  }, []);
+
+  const countsBySlug = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of allProjects) counts[p.category] = (counts[p.category] ?? 0) + 1;
+    return counts;
+  }, [allProjects]);
+
+  const activeEntries = useMemo(
+    () => allProjects.filter((p) => p.category === activeSlug),
+    [allProjects, activeSlug]
+  );
 
   return (
     <>
@@ -148,7 +169,7 @@ export default function Projects() {
         </div>
       </Section>
 
-      {/* Project index — category tabs (Services_Page.pdf) */}
+      {/* Project index — fixed category tabs, entries streamed live from Supabase */}
       <Section tone="canvas">
         <Reveal>
           <SectionHeading
@@ -161,17 +182,11 @@ export default function Projects() {
           <div
             role="tablist"
             aria-label="Browse projects by category"
-            /*
-              Single row, always. The eight labels are too wide for 1280px at
-              the normal label-caps tracking, so tracking and size are tightened
-              here and the row scrolls horizontally rather than wrapping. The
-              scrollbar itself is hidden — the cut-off label is the affordance.
-            */
             className="flex flex-nowrap items-center gap-x-7 overflow-x-auto border-y border-line py-5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {PROJECTS.map((project) => {
               const active = activeSlug === project.slug;
-              const count = (PROJECT_INDEX[project.slug] ?? []).length;
+              const count = countsBySlug[project.slug] ?? 0;
 
               return (
                 <button
@@ -189,7 +204,6 @@ export default function Projects() {
                   }`}
                 >
                   {TAB_LABELS[project.slug] ?? project.title}
-                  {/* Count sits inline so an empty category is obvious before it is opened. */}
                   {count > 0 && <span className="ml-1.5 text-accent">{count}</span>}
                 </button>
               );
@@ -198,10 +212,12 @@ export default function Projects() {
         </Reveal>
 
         <div id="project-index-panel" role="tabpanel" className="mt-12">
-          {activeEntries.length > 0 ? (
+          {!loaded ? (
+            <p className="font-body text-sm text-muted">Loading projects…</p>
+          ) : activeEntries.length > 0 ? (
             <div className="space-y-10">
               {activeEntries.map((entry, e) => (
-                <Reveal key={entry.title} delay={e * 80}>
+                <Reveal key={entry.id} delay={e * 80}>
                   <ProjectEntryBlock entry={entry} index={e} />
                 </Reveal>
               ))}
