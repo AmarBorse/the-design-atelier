@@ -25,7 +25,7 @@ import { createClient } from '@supabase/supabase-js';
  * you have a project; leaving the placeholder's shape intact is what
  * keeps everything else on the site working until then.
  */
-const SUPABASE_URL = 'https://jkexsjmfixnbqvuzxhni.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprZXhzam1maXhuYnF2dXp4aG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMTM2MzYsImV4cCI6MjEwMzU4OTYzNn0.OUQnSzcL03TDMskfiyf0JTSThjzp-6XtcKLUo_1o3A4';
+const SUPABASE_URL = 'https://esspitcgfkaaoywacyzq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzc3BpdGNnZmthYW95d2FjeXpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MTAyMTMsImV4cCI6MjEwODQ4NjIxM30.rfWUWZgQFcHFzy9EEou1zqwKAJbM7alLWXAa2mn53w8';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
